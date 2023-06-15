@@ -1,17 +1,16 @@
 import React from 'react'
-
-const ExpenseItem = () => {
-  let items = ["Food Rs 10","Petrol Rs 100","Movies Rs 200"]
+import "./ExpenseItem.css";
+const ExpenseItem = (props) => {
+    console.log(" props===",  props)
+            const  {title, date , price,  locOfExpense} =props.expTrack;
     return (
-    <div>
-      <h2>Expense Item</h2>
-      {
-         items.map((el)=>{
-            return (
-                <h4>{el}</h4>
-            )
-         })
-      }
+    <div className='expense-item'>
+      <div>{date.getTime().toString() }</div>
+      <div className='expense-item__description'>
+        <h2>{title} </h2>
+        <div className="expense-item__price"> {locOfExpense}</div>
+        <div className="expense-item__price">${price}</div>
+      </div>
     </div>
   )
 }
