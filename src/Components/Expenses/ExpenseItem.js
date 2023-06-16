@@ -1,16 +1,15 @@
 import React from 'react'
 import "./ExpenseItem.css";
+import ExpenseDate from './ExpenseDate';
+import ExpenseDetails from './ExpenseDetails';
 const ExpenseItem = (props) => {
     console.log(" props===",  props)
             const  {title, date , price,  locOfExpense} =props.expTrack;
+          
     return (
     <div className='expense-item'>
-      <div>{date.getTime().toString() }</div>
-      <div className='expense-item__description'>
-        <h2>{title} </h2>
-        <div className="expense-item__price"> {locOfExpense}</div>
-        <div className="expense-item__price">${price}</div>
-      </div>
+      <ExpenseDate date={date} />
+       <ExpenseDetails title={title} price={price} locOfExpense = {locOfExpense} />
     </div>
   )
 }
