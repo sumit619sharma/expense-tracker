@@ -1,21 +1,24 @@
-import React from 'react'
+import React, {useState} from 'react'
 import "./ExpenseItem.css";
 import ExpenseDate from './ExpenseDate';
 import ExpenseDetails from './ExpenseDetails';
 const ExpenseItem = (props) => {
-   // console.log(" props===",  props)
-            const  {title, date , price,  locOfExpense} =props.expTrack;
-          
-    return (
+           const  {title, date , price,  locOfExpense} =props.expTrack;
+           const [upprice,setPrice] = useState(price);
+           const deleteExpense = ()=>{
+            setPrice("100")
+            console.log("expense deleted");
+          }
+           return (
     <div className='expense-item'>
       <ExpenseDate date={date} />
-       <ExpenseDetails title={title} price={price} locOfExpense = {locOfExpense} />
-       <button onClick={deleteExpense} >Delete</button>
+       <ExpenseDetails title={title} price={upprice} locOfExpense = {locOfExpense} />
+       <button onClick={deleteExpense} >expChange</button>
     </div>
   )
+  
+
 }
-const deleteExpense = ()=>{
-  console.log("expense deleted");
-}
+
 
 export default ExpenseItem
