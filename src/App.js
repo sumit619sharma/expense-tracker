@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import ExpenseItem from './Components/Expenses/ExpenseItem';
+import ExpenseForm from './Components/Expenses/ExpenseForm';
 
 function App() {
   const expense = [
@@ -40,6 +41,7 @@ locOfExpense : "mernStack",
   return (
     <div className="App">
       <h2>Let's get Started!</h2>
+      <ExpenseForm/>
       {
         expense.map((obj, ind) => {
           return <ExpenseItem key={ind} expTrack= {obj} /> 
