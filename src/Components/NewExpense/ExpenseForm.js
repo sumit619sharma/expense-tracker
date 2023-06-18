@@ -9,24 +9,27 @@ const ExpenseForm = (props) => {
      let setExpense = props.setExpense;
      let prState = props.prState;
      console.log(props," in expenseForm ====")
-    const addExpense = () => {
+    const addExpense = (event) => {
+      event.preventDefault();
           let formDetail = {
-            date: new Date(2023,6,16),
+            date: new Date(enteredDate),
             title: enteredtitle,
-            amount: enteredAmount,
+            price: enteredAmount,
             locOfExpense: "mernStack",}
     
             setExpense(
                [
-                formDetail,...prState,
+                ...prState,formDetail,
                           
               ]
              )
+                 
+  setAmount(''); setDate(''); setTitle('');
 
             };
            
     return (
-      <form>
+      <form onSubmit={addExpense} >
         <div className='new-expense__controls'>            
         <div className='new-expense__control'>
         <label>Title</label>
@@ -42,7 +45,7 @@ const ExpenseForm = (props) => {
         </div>
         </div>
         <div className='new-expense__actions'>
-      <button  type='submit'  onClick={addExpense}>Add-Expense</button>
+      <button  type='submit' >Add-Expense</button>
       </div>
          </form>
    
