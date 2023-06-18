@@ -54,7 +54,7 @@ function App() {
       <ExpenseFilter selected={filterYear} filterChanged={filterChanged} />
       {
         expense.map((obj, ind) => {
-          return <ExpenseItem key={ind} expTrack= {obj} /> 
+          return <ExpenseItem key={new Date().getTime()} expTrack= {obj} /> 
         })
       }
       
