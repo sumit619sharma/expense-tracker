@@ -8,7 +8,7 @@ const ExpenseForm = (props) => {
     const [enteredDate, setDate] = useState('');
      let setExpense = props.setExpense;
      let prState = props.prState;
-     console.log(props," in expenseForm ====")
+ //    console.log(props," in expenseForm ====")
     const addExpense = (event) => {
       event.preventDefault();
           let formDetail = {
@@ -17,7 +17,7 @@ const ExpenseForm = (props) => {
             price: enteredAmount,
             locOfExpense: "mernStack",}
     
-            setExpense(
+            setExpense( 
                [
                 ...prState,formDetail,
                           
