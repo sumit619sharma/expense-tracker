@@ -30,16 +30,16 @@ function App() {
   const [expense,setExpense] =useState(expenses);
  const [filterList,setFilterList] = useState(expenses);
   const filterChanged= (year)=> {
-    
+    setfilterYear(year);
    let list =  expense.filter((ele)=>{
     console.log("year====",ele.date.getFullYear()," filter ",year)
-      return ele.date.getFullYear()==year;
+      return ele.date.getFullYear()==filterYear;
         })
         console.log("filteredList===",list);
    setFilterList(list);
-    setfilterYear(year);
+    
   }
-  console.log("year===",filterYear)
+  //console.log("year===",filterYear)
   console.log(expense,"after update");
  console.log(filterList,"after update filter");
   return (
@@ -47,21 +47,22 @@ function App() {
       <h2>Let's get Started!</h2>
       <NewExpense setExpense={setExpense} prState={expense} />
       <ExpenseFilter selected={filterYear} filterChanged={filterChanged} />
+       {filterList.length===0 && <h2>"No Expenses for this year..."</h2>}
+       
        {
         filterYear=="none" ? (
         console.log("yes======="),
               expense.map((obj, ind) => {
               return <ExpenseItem key={ind} expTrack= {obj} /> 
             })
-       ) : (
-        filterList.map((obj, ind) => {
-          return <ExpenseItem key={ind} expTrack= {obj} /> 
-        })
-       )                    
-
-      }
-      
-    </div>
+       ): (
+   filterList.map((obj, ind) => {
+              return <ExpenseItem key={ind} expTrack= {obj} /> 
+            })
+       ) }
+       
+       {filterList.length===1 && <h2>"Only single Expense here. Please add more..."</h2>}
+                           </div>
   );
 }
 
