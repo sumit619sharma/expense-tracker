@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import "./ExpenseItem.css";
 import ExpenseDate from './ExpenseDate';
 import ExpenseDetails from './ExpenseDetails';
+import Card from '../UI/Card';
 const ExpenseItem = (props) => {
            const  {title, date , price,  locOfExpense} =props.expTrack;
            const [upprice,setPrice] = useState(price);
@@ -10,11 +11,11 @@ const ExpenseItem = (props) => {
             console.log("expense deleted");
           }
            return (
-    <div className='expense-item'>
+    <Card className='expense-item'>
       <ExpenseDate date={date} />
        <ExpenseDetails title={title} price={upprice} locOfExpense = {locOfExpense} />
        <button onClick={deleteExpense} >expChange</button>
-    </div>
+    </Card>
   )
   
 

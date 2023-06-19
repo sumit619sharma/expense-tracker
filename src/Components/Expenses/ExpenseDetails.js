@@ -1,4 +1,5 @@
 import React from 'react'
+import "./ExpenseItem.css"
 
 const ExpenseDetails = (props) => {
     const  {title,price,  locOfExpense} =props;
