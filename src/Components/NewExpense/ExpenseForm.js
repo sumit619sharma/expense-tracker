@@ -3,28 +3,31 @@ import "./ExpenseForm.css"
 
 
 const ExpenseForm = (props) => {
+  const [enteredID, setID] = useState('');
     const [enteredtitle, setTitle] = useState('');
     const [enteredAmount, setAmount] = useState('');
-    const [enteredDate, setDate] = useState('');
+    const [enteredCategory, setCategory] = useState('Electronic');
     const [newExpense,setNewExpense] = useState(true);
-     let setExpense = props.setExpense;
-     let prState = props.prState;
+      
+     
  //    console.log(props," in expenseForm ====")
     const addExpense = (event) => {
       event.preventDefault();
       setNewExpense(!newExpense);
+     
           let formDetail = {
-            date: new Date(enteredDate),
-            title: enteredtitle,
+            category: enteredCategory,
+            id: enteredID,
             price: enteredAmount,
-            locOfExpense: "mernStack",}
+            product: enteredtitle,}
     
-            setExpense( 
-               [
-                ...prState,formDetail,
-                       ])
+            // setExpense( 
+            //    [
+            //     ...prState,formDetail,
+            //            ])
                  
-  setAmount(''); setDate(''); setTitle('');};
+            props.setExpense(formDetail);
+  setAmount(''); setCategory('Electronic'); setTitle('');  setID('');};
            
   const showAddExpense = ()=>{
     setNewExpense(!newExpense);
@@ -42,16 +45,25 @@ const ExpenseForm = (props) => {
       <form onSubmit={addExpense} >
       <div className='new-expense__controls'>            
       <div className='new-expense__control'>
-      <label>Title</label>
+      <label>ID</label>
+      <input  type='text' value={enteredID} onChange={(e) => {setID(e.target.value)}}  />
+      </div>
+      <div className='new-expense__control'>
+      <label>Product Name</label>
       <input  type='text' value={enteredtitle} onChange={(e) => {setTitle(e.target.value)}}  />
       </div>
       <div className='new-expense__control'>
-      <label>Number</label>
+      <label>Selling Price</label>
       <input  type='number' value={enteredAmount} onChange={(e) => {setAmount(e.target.value)}}   />
       </div>
       <div className='new-expense__control'>
-      <label>Date</label>
-      <input type='date' value={enteredDate} onChange={(e) => {setDate(e.target.value)}}    />
+      <label>Category</label>
+      {/* <input type='date' value={enteredDate} onChange={(e) => {setDate(e.target.value)}}    /> */}
+      <select  value={enteredCategory} onChange={(e)=>setCategory(e.target.value)}>
+        <option value={"Electronic"} >Electronic</option>
+        <option value={"Food"} >Food</option>
+        <option value={"SkinCare"}  >SkinCare</option>
+        </select>
       </div>
       </div>
       

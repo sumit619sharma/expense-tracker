@@ -5,7 +5,7 @@ import "./NewExpense.css"
 const NewExpense = (props) => {
   return (
     <div className='new-expense'>
-        <ExpenseForm setExpense = {props.setExpense} prState ={props.prState} />
+        <ExpenseForm setExpense = {props.setExpense} deleteExp={props.deleteExp} />
     </div>
   )
 }

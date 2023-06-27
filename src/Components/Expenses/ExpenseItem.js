@@ -4,17 +4,17 @@ import ExpenseDate from './ExpenseDate';
 import ExpenseDetails from './ExpenseDetails';
 import Card from '../UI/Card';
 const ExpenseItem = (props) => {
-           const  {title, date , price,  locOfExpense} =props.expTrack;
-           const [upprice,setPrice] = useState(price);
+           const  {product,  price,  category,id} =props.expTrack;
+           
            const deleteExpense = ()=>{
-            setPrice("100")
-            console.log("expense deleted");
+              props.deleteExp(id);
           }
            return (
     <Card className='expense-item'>
-      <ExpenseDate date={date} />
-       <ExpenseDetails title={title} price={upprice} locOfExpense = {locOfExpense} />
-       <button onClick={deleteExpense} >expChange</button>
+      {/* <ExpenseDate date={date} /> */}
+       <ExpenseDetails title={product} price={price} locOfExpense = {id} />
+           
+       <button onClick={deleteExpense} >Delete</button>
     </Card>
   )
   
