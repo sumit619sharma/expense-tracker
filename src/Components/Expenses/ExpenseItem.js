@@ -12,9 +12,10 @@ const ExpenseItem = (props) => {
            return (
     <Card className='expense-item'>
       {/* <ExpenseDate date={date} /> */}
-       <ExpenseDetails title={product} price={price} locOfExpense = {id} />
-           
+       <ExpenseDetails title={product} price={price} id = {id} />
+        <div className="expense-item__price">   
        <button onClick={deleteExpense} >Delete</button>
+       </div>   
     </Card>
   )
   

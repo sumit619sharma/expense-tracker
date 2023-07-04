@@ -37,7 +37,7 @@ const ExpenseForm = (props) => {
       { newExpense ? (
               <div className='new-expense__show'>
               
-            <button  onClick={showAddExpense} >Add-New-Expense</button>
+            <button  onClick={showAddExpense} >Add-New-Product</button>
             
             </div>
       ) : (
@@ -69,7 +69,7 @@ const ExpenseForm = (props) => {
       
       <div className='new-expense__actions'>
       <button  onClick={showAddExpense} >Cancel</button>
-    <button  type='submit' >Add-Expense</button>
+    <button  type='submit' >Add-Product</button>
     
     </div>
        </form>
