@@ -5,7 +5,9 @@ import NewExpense from './Components/NewExpense/NewExpense';
 import { useEffect, useState } from 'react';
 import Expenses from './Components/Expenses/Expenses';
 import SignUp from './Components/SignUp';
-          
+import Login from './Components/Login';
+import {BrowserRouter, Routes,Route  } from 'react-router-dom'
+import Welcom from './Components/Welcom';
 
 const expenses = [
   {
@@ -70,7 +72,13 @@ const categories=["Electronic","Food", "SkinCare"];
 
   return (
     <div className="App">
-      <SignUp/>
+      <BrowserRouter>
+   <Routes>
+  <Route path='/' element={<SignUp/> }/>
+  <Route path='/login' element={<Login/> }/>
+  <Route path='/welcome' element={<Welcom/> }/>
+   </Routes>
+  </BrowserRouter>
       {/* <NewExpense setExpense={newExpenseHandler} />
       <Expenses item = {expense} cat={categories[0]} deleteExp={deleteExpenseeHandler}   />
       <Expenses item = {expense} cat={categories[1]} deleteExp={deleteExpenseeHandler}  />
