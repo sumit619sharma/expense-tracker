@@ -8,6 +8,7 @@ import SignUp from './Components/SignUp';
 import Login from './Components/Login';
 import {BrowserRouter, Routes,Route  } from 'react-router-dom'
 import Welcom from './Components/Welcom';
+import Profile from './Components/Profile';
 
 const expenses = [
   {
@@ -77,6 +78,7 @@ const categories=["Electronic","Food", "SkinCare"];
   <Route path='/' element={<SignUp/> }/>
   <Route path='/login' element={<Login/> }/>
   <Route path='/welcome' element={<Welcom/> }/>
+  <Route path='/profile' element={<Profile/> }/>
    </Routes>
   </BrowserRouter>
       {/* <NewExpense setExpense={newExpenseHandler} />
