@@ -59,9 +59,11 @@ const addUserToFirebase = async (userDetail) =>{
       setError(resp);
       return;
     }
-    console.log( "login===", resp)
+   
   // authCtx.onLogIn(resp.idToken,resp.email);
-    navigation('/welcome');
+  localStorage.setItem('email',resp.email);
+  localStorage.setItem('token',resp.idToken); 
+  navigation('/welcome');
     
   };
 

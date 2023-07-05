@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Profile.css'; // Import the CSS file for styling
 
 function Profile() {
@@ -7,18 +7,81 @@ function Profile() {
     profileUrl: ''
   });
 
+  console.log(':after  of after====',formData)
+  useEffect(()=>{
+    getProfile();
+  },[]);
+
+ // const token = localStorage.getItem('email');
+ // console.log('token===',token);
+
+  const getProfile =async ()  => {
+    const uniqueId = localStorage.getItem('uniqueId');
+    console.log("rspid in getProfile=",uniqueId)
+    try {
+     
+     const resp=  await fetch(`https://react-http-2f680-default-rtdb.firebaseio.com/profile.json`)
+      if(!resp.ok){
+       throw new Error('Request Failed');
+       
+      }
+
+      const result =await resp.json();
+      console.log("get profile==", result );
+    setFormData({
+        name:   result[uniqueId].name || '',
+        profileUrl: result[uniqueId].profileUrl || ''
+    })
+    console.log(':formData after',formData);
+
+    } catch (error) {
+     console.log("failed to Post=",error);
+    }
+}
+
+  const addToCartCrud =async (cartItem)  => {
+    try {
+     
+     const resp=  await fetch(`https://react-http-2f680-default-rtdb.firebaseio.com/profile.json?`,{
+       method:'POST',
+       body: JSON.stringify(cartItem),
+       headers:{
+         'Content-Type': 'application/json'
+       }
+      })
+      if(!resp.ok){
+       throw new Error('Request Failed');
+      }
+      const resArr =await resp.json();
+      console.log('respid===',resArr);
+    return resArr;
+
+    } catch (error) {
+     console.log("failed to Post=",error);
+    }
+}
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value
     }));
+
   };
 
-  const handleUpdate = (e) => {
+  const handleUpdate =async (e) => {
     e.preventDefault();
     console.log(formData); // Perform update logic or API call here
-  };
+  
+   const uniqueId= await addToCartCrud(formData);
+   localStorage.setItem('uniqueId',uniqueId.name);
+    await getProfile();
+
+
+
+
+};
 
   const handleCancel = () => {
     setFormData({
@@ -26,6 +89,8 @@ function Profile() {
       profileUrl: ''
     });
   };
+
+
 
   return (
     <div  style={{marginTop:'10%'}} className="profile-container">
@@ -37,9 +102,9 @@ function Profile() {
           <input
             type="text"
             name="name"
-            value={formData.name}
+            value={ formData.name}
             onChange={handleChange}
-            placeholder="Enter your name"
+            
             required
           />
         
@@ -50,9 +115,9 @@ function Profile() {
           <input
             type="text"
             name="profileUrl"
-            value={formData.profileUrl}
+            value={ formData.profileUrl}
             onChange={handleChange}
-            placeholder="Enter your profile URL"
+              
             required
           />
        

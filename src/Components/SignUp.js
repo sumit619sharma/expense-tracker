@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './SignUp.css'; // Import the CSS file for styling
-import { Link } from 'react-router-dom';
+import { Link , useNavigate} from 'react-router-dom';
 
 function SignUp() {
   const [formData, setFormData] = useState({
@@ -9,7 +9,7 @@ function SignUp() {
     confirm: '',
   });
   const [error,setError] = useState(false);
-
+  const navigate = useNavigate();
 
   const addUserToFirebase = async (userDetail) =>{
   
@@ -73,7 +73,7 @@ function SignUp() {
         return;
       }
       console.log( "login===", resp)
-     
+      navigate('/login');
     
     setFormData({
       email: '',
