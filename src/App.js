@@ -10,6 +10,7 @@ import {BrowserRouter, Routes,Route  } from 'react-router-dom'
 import Welcom from './Components/Welcom';
 import Profile from './Components/Profile';
 import NavBar from './Components/NavBar';
+import Forgot from './Components/Forgot';
 
 const expenses = [
   {
@@ -81,6 +82,7 @@ const categories=["Electronic","Food", "SkinCare"];
   <Route path='/login' element={<Login/> }/>
   <Route path='/welcome' element={<Welcom/> }/>
   <Route path='/profile' element={<Profile/> }/>
+  <Route path='/forgot' element={<Forgot/> }/>
    </Routes>
   </BrowserRouter>
       {/* <NewExpense setExpense={newExpenseHandler} />

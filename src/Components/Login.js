@@ -1,6 +1,6 @@
 import React, { useContext, useState, } from 'react';
 import { Card, Container } from 'react-bootstrap';
-import {useNavigate} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 //import AuthContext from '../store/auth-context';
 
 const Login = () => {
@@ -96,6 +96,9 @@ const addUserToFirebase = async (userDetail) =>{
         </div>
         {error && <div>{error}</div>}
         <button type="submit">Login</button>
+        <div>
+          <Link to='/forgot'>forgott password?</Link>
+        </div>
       </form>
     </div>
                 
