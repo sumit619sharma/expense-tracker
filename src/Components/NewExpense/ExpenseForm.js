@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import "./ExpenseForm.css"
+import EditContext from '../../store/edit-context';
 
 
 const ExpenseForm = (props) => {
@@ -8,7 +9,15 @@ const ExpenseForm = (props) => {
     const [enteredAmount, setAmount] = useState('');
     const [enteredCategory, setCategory] = useState('Electronic');
     const [newExpense,setNewExpense] = useState(true);
-      
+      const editCtx = useContext(EditContext);
+    console.log('editCtx====',editCtx);
+     if(editCtx.isEdit){
+      // setTitle(editCtx.item.product)
+      // setAmount(editCtx.item.price)
+      // setCategory(editCtx.item.category)
+            editCtx.offEdit(); 
+     }
+
     const createExpense =async (item)=>{
       console.log(item);
       try {
@@ -30,6 +39,8 @@ const ExpenseForm = (props) => {
       }
      } 
 
+      
+
      const getExpense =async (id)=>{
          console.log('respId===', id);
          
@@ -50,38 +61,49 @@ const ExpenseForm = (props) => {
 
     const addExpense =async (event) => {
       event.preventDefault();
-      setNewExpense(!newExpense);
+
+       
+    //  setNewExpense(!newExpense);
      
           let formDetail = {
             category: enteredCategory,
             price: enteredAmount,
             product: enteredtitle,}
     
-                 
+       if(editCtx.sureEdit){
+        //api call
+        props.editExp(formDetail,editCtx.item.id);
+        //const editResult = await editExpense(editCtx.item);
+        //props.editExp(formDetail);
+        //console.log("edit Result===",editResult);
+    //    editCtx.offSureEdit();
+        return ;
+       }          
             
          
           const resp = await  createExpense(formDetail);
          if(resp.name){
             const resObject = getExpense(resp.name);
-            props.setExpense(resObject);
+            props.setExpense(resObject,resp.name);
          }
            
        
           
             setAmount(''); setCategory('Electronic'); setTitle('');  ;};
            
-  const showAddExpense = ()=>{
+  
+            const showAddExpense = ()=>{
     setNewExpense(!newExpense);
   }
     return (
       <>
-      { newExpense ? (
+      {/* { newExpense ? (
               <div className='new-expense__show'>
               
             <button  onClick={showAddExpense} >Add-New-Product</button>
             
             </div>
-      ) : (
+      ) : ( */}
         
       <form onSubmit={addExpense} >
       <div className='new-expense__controls'>            
@@ -109,12 +131,12 @@ const ExpenseForm = (props) => {
       </div>
       
       <div className='new-expense__actions'>
-      <button  onClick={showAddExpense} >Cancel</button>
+    
     <button  type='submit' >Add-Product</button>
     
     </div>
        </form>
-      ) }
+      {/* ) } */}
 
          </>
   )

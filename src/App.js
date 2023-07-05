@@ -11,6 +11,7 @@ import Welcom from './Components/Welcom';
 import Profile from './Components/Profile';
 import NavBar from './Components/NavBar';
 import Forgot from './Components/Forgot';
+import CartProvider from './store/CartProvider';
 
 const expenses = [
   {
@@ -75,6 +76,7 @@ const categories=["Electronic","Food", "SkinCare"];
 
   return (
     <div className="App">
+    <CartProvider>
       <BrowserRouter>
       <NavBar/>
    <Routes>
@@ -89,6 +91,7 @@ const categories=["Electronic","Food", "SkinCare"];
       <Expenses item = {expense} cat={categories[0]} deleteExp={deleteExpenseeHandler}   />
       <Expenses item = {expense} cat={categories[1]} deleteExp={deleteExpenseeHandler}  />
       <Expenses item = {expense} cat={categories[2]} deleteExp={deleteExpenseeHandler}  /> */}
+      </CartProvider>
     </div>
   );
 }

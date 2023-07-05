@@ -5,9 +5,9 @@ import "./NewExpense.css"
 const NewExpense = (props) => {
   return (
     <div className='new-expense'>
-        <ExpenseForm setExpense = {props.setExpense} deleteExp={props.deleteExp} />
+        <ExpenseForm setExpense = {props.setExpense} deleteExp={props.deleteExp} editExp={props.editExp} />
     </div>
   )
 }
 
-export default NewExpense
+export default NewExpense;

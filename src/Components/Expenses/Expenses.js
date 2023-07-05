@@ -31,9 +31,9 @@ const Expenses = (props) => {
        <div>
        <div style={{color: "red",fontSize: 20}}>{props.cat}</div>
        </div>
-       {filterList.map((obj, ind) => {
+       {filterList.map((obj, ) => {
               return <>
-               <ExpenseItem key={obj.id} expTrack= {obj} deleteExp={props.deleteExp} /> 
+               <ExpenseItem key={obj.id} expTrack= {obj} deleteExp={props.deleteExp} editExp={props.editExp} /> 
               
                </>})}
        {/* {filterList.length===1 && <h2>"Only single Expense here. Please add more..."</h2>} */}
