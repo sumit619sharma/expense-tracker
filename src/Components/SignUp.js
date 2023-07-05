@@ -83,7 +83,7 @@ function SignUp() {
   };
 
   return (
-    <div  style={{marginTop: '5%' ,alignContent:'centre'}} className="signup-container">
+    <div  style={{marginTop: '10%' ,alignContent:'centre'}} className="signup-container">
       <h2 style={{color: 'black'}} >Sign Up</h2>
       <form className="signup-form" onSubmit={handleSubmit}>
         

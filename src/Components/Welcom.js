@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 const Welcom = () => {
-
+const [isVerified ,setIsVerified] = useState(false);
   const sendEmailVerification = async (idToken, apiKey) => {
    console.log("request started" ,idToken, apiKey);
     const url = `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${apiKey}`;
@@ -22,7 +22,7 @@ const Welcom = () => {
       if (!response.ok) {
         throw new Error('Failed to send email verification');
       }
-  
+          setIsVerified(true);
       console.log('Email verification sent successfully');
     } catch (error) {
       console.log('Error sending email verification:', error);
@@ -35,12 +35,12 @@ const Welcom = () => {
    }
   
   return (
-    <div>
+    <div style={{marginTop: '10%'}} >
     <div style={{color: 'black' , display: 'flex' , justifyContent:'space-between'}}>
     <div> welcome to expense tracker</div> 
       <div>profile is incomplete.<Link to='/profile' >Complete Now</Link> </div>
     </div>
-    <Button  onClick={makeEmailRequest}  variant="warning">Verify Email</Button>
+    <Button   style={{ backgroundColor: isVerified? 'green': 'red', }} onClick={makeEmailRequest}> { isVerified? 'verified': 'Verify Email'}  </Button>
        </div>
   )
 }

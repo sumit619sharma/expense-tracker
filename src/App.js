@@ -9,6 +9,7 @@ import Login from './Components/Login';
 import {BrowserRouter, Routes,Route  } from 'react-router-dom'
 import Welcom from './Components/Welcom';
 import Profile from './Components/Profile';
+import NavBar from './Components/NavBar';
 
 const expenses = [
   {
@@ -74,6 +75,7 @@ const categories=["Electronic","Food", "SkinCare"];
   return (
     <div className="App">
       <BrowserRouter>
+      <NavBar/>
    <Routes>
   <Route path='/' element={<SignUp/> }/>
   <Route path='/login' element={<Login/> }/>
