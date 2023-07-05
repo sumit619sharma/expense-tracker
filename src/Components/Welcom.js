@@ -5,9 +5,41 @@ import NewExpense from './NewExpense/NewExpense';
 import Expenses from './Expenses/Expenses';
 
 const Welcom = () => {
+
+  console.log('ckeck if welcome screen render');
 const [isVerified ,setIsVerified] = useState(false);
 const [expense,setExpense] =useState([]);
 
+
+const getAllExpense =async ()=>{
+  
+  
+try {
+ const resp=  await fetch(`https://react-http-2f680-default-rtdb.firebaseio.com/expenses.json`)
+
+ if(!resp.ok){
+   throw new Error("succesful request but no response ")
+  }
+  const resObj = await resp.json();
+  console.log('All Expense==', resObj); 
+
+    onRefreshGetExpense(resObj);
+
+ 
+} catch (error) {
+ console.log("post error==",error);   
+}
+} 
+
+const onRefreshGetExpense = (resObj)=>{
+ const expenseArr = [];
+  for(let key in resObj){
+    const currExpDetail = resObj[key];
+    expenseArr.push(currExpDetail);
+  }
+
+  setExpense(expenseArr);  
+}
 
 const newExpenseHandler= (newItem)=>{
     
@@ -43,6 +75,10 @@ localStorage.removeItem(deleteId);
 //   console.log("fetchExpense===",fetchExpense)
 //   setExpense(fetchExpense);    
 // },[]);
+
+useEffect(()=>{
+   getAllExpense();
+},[]);
 
 
 const categories=["Electronic","Food", "SkinCare"]; 

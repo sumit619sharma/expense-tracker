@@ -2,12 +2,13 @@ import React from 'react'
 import "./ExpenseItem.css"
 
 const ExpenseDetails = (props) => {
-  const  {title,price,  id} =props;
+  const  {title,price} =props;
     return (
       <div className='expense-item__description'>
-      <h2>{title} </h2>
-      <div className="expense-item__price"> {id}</div>
+      <h2 style={{color: 'yellow'}} >{title} </h2>
       <div className="expense-item__price">${price}</div>
+      <button onClick={props.deleteExpense} >Delete</button>
+      
     </div>
     )
   
