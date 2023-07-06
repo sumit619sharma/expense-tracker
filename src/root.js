@@ -8,12 +8,14 @@ import NavBar from './Components/NavBar';
 import Forgot from './Components/Forgot';
 import CartProvider from './store/CartProvider';
 import {  useSelector } from 'react-redux';
-
+import './App.css';
 
 const Root = () => {
     const emailExist =  useSelector(state=> state.auth.userDetail.email)
+    const theme =  useSelector(state=> state.theme.theme)
    
-  return  <CartProvider>
+  return  <div className={`app ${theme}`} > 
+   <CartProvider>
       <BrowserRouter>
       <NavBar/>
    <Routes>
@@ -26,5 +28,6 @@ const Root = () => {
    </Routes>
   </BrowserRouter>
       </CartProvider>
+      </div>
 }
 export default Root;

@@ -6,6 +6,7 @@ import Expenses from './Expenses/Expenses';
 import EditContext from '../store/edit-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { expenseAction } from '../redux-store/expense-reducer';
+import { themeAction } from '../redux-store/theme-reducer';
 
 const Welcom = () => {
 
@@ -14,10 +15,10 @@ const [isVerified ,setIsVerified] = useState(false);
 const [expense,setExpense] =useState([]);
  const dispatch = useDispatch();
  const editCtx = useContext(EditContext);
-   const authState = useSelector(state=>state.expense);
-   console.log("addExpense==",authState);
-   console.log("deleteExpense==",authState);
-   console.log("updateExpense==",authState);
+   const totalExpense = useSelector(state=>state.expense.expenseTotal);
+  //  console.log("addExpense==",authState);
+  //  console.log("deleteExpense==",authState);
+  //  console.log("updateExpense==",authState);
 const editExpense =async (item,id)=>{
   // maybe i can remove id from item 
   
@@ -163,6 +164,12 @@ const sendEmailVerification = async (idToken, apiKey) => {
       const api ='AIzaSyA4Old42pkOxqkr1jsyq_dYLAFonOwLHJ4';
         sendEmailVerification(token,api);
    }
+   const onPremiumTheme = ()=>{
+  dispatch(themeAction.darkTheme());
+   }
+   const onToggleTheme = ()=>{
+    dispatch(themeAction.toggleTheme());
+     }
   
   return (
     <div style={{marginTop: '7%'}} >
@@ -170,8 +177,11 @@ const sendEmailVerification = async (idToken, apiKey) => {
     <div> welcome to expense tracker</div> 
       <div>profile is incomplete.<Link to='/profile' >Complete Now</Link> </div>
     </div>
+    <div style={{display:'flex', justifyContent: 'space-around'}} >
     <Button   style={{ backgroundColor: isVerified? 'green': 'red', }} onClick={makeEmailRequest}> { isVerified? 'verified': 'Verify Email'}  </Button>
-    
+     {totalExpense>10000 && <Button   variant='success'  onClick={onPremiumTheme}>Activate-premium</Button>} 
+     <Button   variant='warning'  onClick={onToggleTheme}>change-theme</Button>
+    </div>
     <NewExpense setExpense={newExpenseHandler} editExp ={editExpenseeHandler}  />
       <Expenses item = {expense} cat={categories[0]} deleteExp={deleteExpenseeHandler}  />
       <Expenses item = {expense} cat={categories[1]} deleteExp={deleteExpenseeHandler}   />

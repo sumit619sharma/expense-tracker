@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState={
-    expenseItem: [],
+    expenseItem: {},
     expenseTotal: 0,
 }
 
@@ -10,23 +10,21 @@ const expenseSlice = createSlice({
     initialState,
     reducers: {
      addExpense(state,action){
-        state.expenseItem.push(action.payload);
-
+   // var upstate = state
+        state.expenseItem[action.payload.id]=action.payload;
+        state.expenseTotal =Number( state.expenseTotal)+Number(action.payload.price)
+ 
      },removeExpense(state,action){
+        if(Object.keys(state.expenseItem).length==0) return state;
         console.log("removeExpense==", action.payload.id);
-           state.expenseItem = state.expenseItem.filter((item)=>{
-            console.log("reducerItem==",item);
-          return  item.id!=action.payload.id });
+        state.expenseTotal = Number(state.expenseTotal)-  Number(state.expenseItem[action.payload.id].price)     
+        delete state.expenseItem[action.payload.id];
      },updateExpense(state,action){
-        var idx =-1;
-        state.expenseItem.forEach((ele,ind)=>{
-            if(ele.id==action.payload.id){
-                idx=ind;
-                return;
-            }
-        })
-        const passItem = {...action.payload.item,id: action.payload.id}
-        state.expenseItem[idx]=passItem;
+        state.expenseTotal = Number(state.expenseTotal)-  Number(state.expenseItem[action.payload.id].price);
+        state.expenseTotal = Number(state.expenseTotal)+  Number(action.payload.item.price);
+        
+      const passItem= {...action.payload.item,id: action.payload.id}
+        state.expenseItem[ action.payload.id]=passItem;
      }
     }
 })
