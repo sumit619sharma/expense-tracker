@@ -4,14 +4,20 @@ import { Link } from 'react-router-dom';
 import NewExpense from './NewExpense/NewExpense';
 import Expenses from './Expenses/Expenses';
 import EditContext from '../store/edit-context';
+import { useDispatch, useSelector } from 'react-redux';
+import { expenseAction } from '../redux-store/expense-reducer';
 
 const Welcom = () => {
 
-  console.log('ckeck if welcome screen render');
+
 const [isVerified ,setIsVerified] = useState(false);
 const [expense,setExpense] =useState([]);
-console.log("total expense==",expense);
+ const dispatch = useDispatch();
  const editCtx = useContext(EditContext);
+   const authState = useSelector(state=>state.expense);
+   console.log("addExpense==",authState);
+   console.log("deleteExpense==",authState);
+   console.log("updateExpense==",authState);
 const editExpense =async (item,id)=>{
   // maybe i can remove id from item 
   
@@ -27,7 +33,7 @@ const editExpense =async (item,id)=>{
       throw new Error("succesful request but no response ")
      }
      const resArr =await resp.json();
-     console.log("edit Result===",resArr);
+   
  editCtx.offSureEdit();
  getAllExpense();
     
@@ -69,7 +75,7 @@ try {
    throw new Error("succesful request but no response ")
   }
   const resObj = await resp.json();
-  console.log('All Expense==', resObj); 
+  
 
     onRefreshGetExpense(resObj);
 
@@ -90,24 +96,28 @@ const onRefreshGetExpense = (resObj)=>{
 }
 
 const newExpenseHandler= (newItem,id)=>{
-  console.log('newItem id==',id);
-    
+ const passItem = {...newItem,id};
+    console.log('passItem',newItem);
   setExpense( 
     [
-     ...expense, {...newItem,id:id} ,
+     ...expense, passItem ,
             ])
+  dispatch(expenseAction.addExpense(passItem))
+
           getAllExpense();
 }
 
 
 const deleteExpenseeHandler= async (deleteId)=>{
- 
+ dispatch(expenseAction.removeExpense({id: deleteId}));
    await deleteExpense(deleteId);
+
    await getAllExpense();
 
 }
 
 const editExpenseeHandler= async (item,id)=>{
+  dispatch(expenseAction.updateExpense({item,id}));
    await editExpense(item,id);
    getAllExpense();
   // await deleteExpense(deleteId);
@@ -115,21 +125,6 @@ const editExpenseeHandler= async (item,id)=>{
 
 }
 
-// useEffect(()=>{
-//   // fetch expenses from local storage;
-//   let fetchExpense=[];
-//   console.log("length====",localStorage.length)
-//   for (let key of Object.keys(localStorage)) {
-//     console.log(key); // Output each key in the localStorage
-//     console.log("times");
-//     let item = JSON.parse( localStorage.getItem(key));
-//     fetchExpense.push(item);
-//   }
-
-
-//   console.log("fetchExpense===",fetchExpense)
-//   setExpense(fetchExpense);    
-// },[]);
 
 useEffect(()=>{
    getAllExpense();

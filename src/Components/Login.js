@@ -1,6 +1,8 @@
 import React, { useContext, useState, } from 'react';
 import { Card, Container } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
 import {Link, useNavigate} from 'react-router-dom'
+import { authAction } from '../redux-store/auth-reducer';
 //import AuthContext from '../store/auth-context';
 
 const Login = () => {
@@ -8,6 +10,9 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
       const navigation =  useNavigate();
+      const dispatch = useDispatch();
+      const emailExist = useSelector(state=> state.auth.userDetail.email  ) ;
+      
    //const authCtx= useContext(AuthContext);
   const handleUsernameChange = (e) => {
     setEmail(e.target.value);
@@ -17,7 +22,7 @@ const Login = () => {
     setPassword(e.target.value);
   };
 
-const addUserToFirebase = async (userDetail) =>{
+const getUserLogin = async (userDetail) =>{
   
   try {
     const resp = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyA4Old42pkOxqkr1jsyq_dYLAFonOwLHJ4',{
@@ -30,39 +35,41 @@ const addUserToFirebase = async (userDetail) =>{
         if(!resp.ok){
          // setError(true);
           const err=await resp.json();
-         
-          
-          return err.error.message;
+          console.log("response with error",err);
+            //  return err.error.message;
         }
-//setError(false);
+
     const res = await resp.json();
-   
+    const passData = {idToken: res.idToken,email: res.email}
+   console.log('use details onLogin',res);
+   dispatch( authAction.onLogIn({data: passData}));
     return res;  
   } catch (err) {
-  
-    return err.error.message;
+    console.log("request failed", err);
+    // return err.error.message;
   }
   
 }
 
   const handleSubmit =async (e) => {
     e.preventDefault();
-       
+       setError(false);
     const detail = {
       email: email,
       password: password,
       returnSecureToken: true,
     }
-    const resp = await addUserToFirebase(detail);
+  const resp=   await getUserLogin(detail);
   // console.log("inside check",resp)
-    if(!resp.idToken){
-      setError(resp);
+  console.log( "emailExist==", emailExist)
+    if(!resp.email){
+      setError(true);
       return;
     }
    
   // authCtx.onLogIn(resp.idToken,resp.email);
-  localStorage.setItem('email',resp.email);
-  localStorage.setItem('token',resp.idToken); 
+  // localStorage.setItem('email',resp.email);
+  // localStorage.setItem('token',resp.idToken); 
   navigation('/welcome');
     
   };
@@ -94,7 +101,7 @@ const addUserToFirebase = async (userDetail) =>{
             onChange={handlePasswordChange}
           />
         </div>
-        {error && <div>{error}</div>}
+        {error && <div>{"failed to login"}</div>}
         <button type="submit">Login</button>
         <div>
           <Link to='/forgot'>forgott password?</Link>

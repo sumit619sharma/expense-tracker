@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import "./ExpenseForm.css"
 import EditContext from '../../store/edit-context';
 
@@ -10,13 +10,20 @@ const ExpenseForm = (props) => {
     const [enteredCategory, setCategory] = useState('Electronic');
     const [newExpense,setNewExpense] = useState(true);
       const editCtx = useContext(EditContext);
-    console.log('editCtx====',editCtx);
-     if(editCtx.isEdit){
-      // setTitle(editCtx.item.product)
-      // setAmount(editCtx.item.price)
-      // setCategory(editCtx.item.category)
-            editCtx.offEdit(); 
-     }
+    
+     
+const filledEditDetails=()=>{
+      setTitle(editCtx.item.product)
+      setAmount(editCtx.item.price)
+      setCategory(editCtx.item.category)
+}
+
+     useEffect(()=>{
+        if(editCtx.isEdit){
+          filledEditDetails();
+        }
+        editCtx.offEdit();
+     },[editCtx.isEdit])
 
     const createExpense =async (item)=>{
       console.log(item);
@@ -62,10 +69,7 @@ const ExpenseForm = (props) => {
     const addExpense =async (event) => {
       event.preventDefault();
 
-       
-    //  setNewExpense(!newExpense);
-     
-          let formDetail = {
+           let formDetail = {
             category: enteredCategory,
             price: enteredAmount,
             product: enteredtitle,}
@@ -73,17 +77,14 @@ const ExpenseForm = (props) => {
        if(editCtx.sureEdit){
         //api call
         props.editExp(formDetail,editCtx.item.id);
-        //const editResult = await editExpense(editCtx.item);
-        //props.editExp(formDetail);
-        //console.log("edit Result===",editResult);
-    //    editCtx.offSureEdit();
-        return ;
+    setAmount(''); setCategory('Electronic'); setTitle('');    
+    return ;
        }          
             
          
           const resp = await  createExpense(formDetail);
          if(resp.name){
-            const resObject = getExpense(resp.name);
+            const resObject = await getExpense(resp.name);
             props.setExpense(resObject,resp.name);
          }
            

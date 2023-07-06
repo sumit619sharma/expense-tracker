@@ -3,6 +3,7 @@ import "./ExpenseItem.css";
 import Card from '../UI/Card';
 import ExpenseDetails from './ExpenseDetails';
 import EditContext from '../../store/edit-context';
+import Cards from '../UI/Card';
 
 const ExpenseItem = (props) => {
   const editCtx = useContext(EditContext);
@@ -16,13 +17,10 @@ const ExpenseItem = (props) => {
             //props.editExp(id,props.expTrack);
         }
 
-           return (
-    <Card className='expense-item'>
-      {/* <ExpenseDate date={date} /> */}
+           return (  <Cards   className='expense-item'>
+        <ExpenseDetails title={product} price={price} deleteExpense={deleteExpense} editExp={editExpense} id={id} />
+        </Cards>
     
-       <ExpenseDetails title={product} price={price} deleteExpense={deleteExpense} editExp={editExpense} id={id} />
-           
-    </Card>
   )
   
 
