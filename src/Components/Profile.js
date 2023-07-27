@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import './Profile.css'; // Import the CSS file for styling
+import { useSelector } from 'react-redux';
 
 function Profile() {
   const [formData, setFormData] = useState({
     name: '',
     profileUrl: ''
   });
+  const user = useSelector(state=>state.auth.userDetail);
+  console.log("WELCOME SCREEN");
+    const modifiedEmail = user.email.replace(/[@.]/g, '');
 
   console.log(':after  of after====',formData)
   useEffect(()=>{
@@ -20,7 +24,7 @@ function Profile() {
     console.log("rspid in getProfile=",uniqueId)
     try {
      
-     const resp=  await fetch(`https://react-http-2f680-default-rtdb.firebaseio.com/profile.json`)
+     const resp=  await fetch(`https://react-http-2f680-default-rtdb.firebaseio.com/profile/${modifiedEmail}.json`)
       if(!resp.ok){
        throw new Error('Request Failed');
        
@@ -29,8 +33,8 @@ function Profile() {
       const result =await resp.json();
       console.log("get profile==", result );
     setFormData({
-        name:   result[uniqueId].name || '',
-        profileUrl: result[uniqueId].profileUrl || ''
+        name:  result.name || '',
+        profileUrl: result.profileUrl || ''
     })
     console.log(':formData after',formData);
 
@@ -42,8 +46,8 @@ function Profile() {
   const addToCartCrud =async (cartItem)  => {
     try {
      
-     const resp=  await fetch(`https://react-http-2f680-default-rtdb.firebaseio.com/profile.json?`,{
-       method:'POST',
+     const resp=  await fetch(`https://react-http-2f680-default-rtdb.firebaseio.com/profile/${modifiedEmail}.json?`,{
+       method:'PUT',
        body: JSON.stringify(cartItem),
        headers:{
          'Content-Type': 'application/json'
@@ -75,6 +79,9 @@ function Profile() {
     console.log(formData); // Perform update logic or API call here
   
    const uniqueId= await addToCartCrud(formData);
+   if(!uniqueId){
+    return;
+   }
    localStorage.setItem('uniqueId',uniqueId.name);
     await getProfile();
 

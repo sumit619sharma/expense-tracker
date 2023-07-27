@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import "./ExpenseForm.css"
 import EditContext from '../../store/edit-context';
+import { useSelector } from 'react-redux';
 
 
 const ExpenseForm = (props) => {
@@ -10,7 +11,8 @@ const ExpenseForm = (props) => {
     const [enteredCategory, setCategory] = useState('Electronic');
     const [newExpense,setNewExpense] = useState(true);
       const editCtx = useContext(EditContext);
-    
+    const user = useSelector(state=> state.auth.userDetail);
+    const modifiedEmail = user.email.replace(/[@.]/g, '');
      
 const filledEditDetails=()=>{
       setTitle(editCtx.item.product)
@@ -19,16 +21,17 @@ const filledEditDetails=()=>{
 }
 
      useEffect(()=>{
-        if(editCtx.isEdit){
+        if(editCtx.sureEdit){
           filledEditDetails();
         }
-        editCtx.offEdit();
-     },[editCtx.isEdit])
+        //editCtx.offEdit();
+     },[editCtx.sureEdit])
 
     const createExpense =async (item)=>{
-      console.log(item);
+      
       try {
-        const resp=  await fetch(`https://react-http-2f680-default-rtdb.firebaseio.com/expenses.json`,{
+   // `https://react-http-2f680-default-rtdb.firebaseio.com/expenses/${modifiedEmail}.json`
+        const resp=  await fetch('http://localhost:3000/expense',{
           method:'POST',
           body: JSON.stringify(item),
           headers:{
@@ -46,13 +49,12 @@ const filledEditDetails=()=>{
       }
      } 
 
-      
-
-     const getExpense =async (id)=>{
+      const getExpense =async (id)=>{
          console.log('respId===', id);
          
       try {
-        const resp=  await fetch(`https://react-http-2f680-default-rtdb.firebaseio.com/expenses/${id}.json`)
+       // `https://react-http-2f680-default-rtdb.firebaseio.com/expenses/${modifiedEmail}/${id}.json`     
+        const resp=  await fetch(`http://localhost:3000/expense/get-one/${id}`)
     
         if(!resp.ok){
           throw new Error("succesful request but no response ")
@@ -83,11 +85,18 @@ const filledEditDetails=()=>{
             
          
           const resp = await  createExpense(formDetail);
-         if(resp.name){
-            const resObject = await getExpense(resp.name);
-            props.setExpense(resObject,resp.name);
-         }
+        //  if(resp.name){
+        //     const resObject = await getExpense(resp.name);
+        //     props.setExpense(resObject,resp.name);
+        //  }
+        console.log('create backend resp==',resp)
            
+        // if(resp.id){
+        //   const resObject = await getExpense(resp.id);
+        //  console.log("get by id==",resObject);
+        //  props.setExpense(resObject,resp.id);
+       //}
+       props.setExpense();
        
           
             setAmount(''); setCategory('Electronic'); setTitle('');  ;};
@@ -133,7 +142,7 @@ const filledEditDetails=()=>{
       
       <div className='new-expense__actions'>
     
-    <button  type='submit' >Add-Product</button>
+    <button  type='submit' > {editCtx.sureEdit? 'Update':'Add-Product' }</button>
     
     </div>
        </form>

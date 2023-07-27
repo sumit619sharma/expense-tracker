@@ -10,21 +10,22 @@ const NavBar = (props) => {
     
        const navigate = useNavigate();
      const dispatch = useDispatch();
-       const email = localStorage.getItem('email');
+       
     const onLogOut = () =>{
     
-    dispatch(authAction.onLogOut);
+    dispatch(authAction.onLogOut());
       navigate('/login');
     }
-    const emailExist = useSelector(state=> state.auth.userDetail.email) || '';
-  return (
+    const emailExist = useSelector(state=> state.auth.userDetail.email) || null;
+  console.log('emailExist',emailExist);
+    return (
     <Navbar  fixed='top'   bg="light" className="bg-body-tertiary">
     <Container >
       <Navbar.Brand >Expense-Tracker</Navbar.Brand>
      <Navbar.Toggle />
       <Navbar.Collapse className="justify-content-end">
         <Navbar.Text>
-        {emailExist && <Button variant="outline-success"  onClick={onLogOut} >LogOut</Button>}
+      {emailExist && <Button variant="outline-success"  onClick={onLogOut} >LogOut</Button>}
         
         </Navbar.Text>
       </Navbar.Collapse>

@@ -14,7 +14,7 @@ const ExpenseItem = (props) => {
           }
           const editExpense = ()=>{
             editCtx.onEdit(props.expTrack);
-            //props.editExp(id,props.expTrack);
+          //  props.editExp(props.expTrack,id);
         }
 
            return (  <Cards   className='expense-item'>

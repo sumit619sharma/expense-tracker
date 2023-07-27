@@ -8,7 +8,7 @@ import Card from '../UI/Card';
 import Cards from '../UI/Card';
 const Expenses = (props) => {
    // const [filterYear,setfilterYear] = useState("2023");
-    
+    console.log('passed expense props items',props);
    let expense = props.item;
     // const filterChanged= (year)=> {
     //   setfilterYear(year);
@@ -42,4 +42,4 @@ const Expenses = (props) => {
   )
 }
 
-export default Expenses
+export default Expenses;

@@ -11,10 +11,11 @@ const authSlice = createSlice({
     initialState,
     reducers: {
       onLogIn(state,action) {
-        
+
         state.isLoggedIn= true;
         state.userDetail =  {... action.payload.data}    },
       onLogOut(state){
+        console.log("get called onLogOut");
          state.isLoggedIn=false;
          state.userDetail={};
       }

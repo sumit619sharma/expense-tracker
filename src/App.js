@@ -4,8 +4,9 @@ import './App.css';
 
 
 import { Provider } from 'react-redux';
-import store from './redux-store';
+import {store,persistor} from './redux-store/index';
 import Root from './root';
+import { PersistGate } from 'redux-persist/integration/react';
 
 const expenses = [
   {
@@ -26,20 +27,11 @@ locOfExpense : "mernStack",
 },
 ]
 const  App = ()=> {
-  
-  
-
-
-
-
-
-
-
-
-  return (
-    
-    <Provider store={store} >
+   return (
+      <Provider store={store} >
+       <PersistGate loading={null} persistor={persistor}>
     <Root/>
+    </PersistGate>
       </Provider>
     
   );

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import './SignUp.css'; // Import the CSS file for styling
 import { Link , useNavigate} from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { themeAction } from '../redux-store/theme-reducer';
 
 function SignUp() {
   const [formData, setFormData] = useState({
@@ -8,11 +10,12 @@ function SignUp() {
     password: '',
     confirm: '',
   });
-  const [error,setError] = useState(false);
+ 
   const navigate = useNavigate();
-
-  const addUserToFirebase = async (userDetail) =>{
-  
+const dispatch = useDispatch();
+const error = useSelector(state=> state.theme.error);  
+const addUserToFirebase = async (userDetail) =>{
+    
     try {
       const resp = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA4Old42pkOxqkr1jsyq_dYLAFonOwLHJ4',{
         method: 'POST',
@@ -24,17 +27,19 @@ function SignUp() {
           if(!resp.ok){
            // setError(true);
             const err=await resp.json();
-           
+            console.log("sign up failed with response")
+           dispatch(themeAction.toggleError());
+            return ;
             
-            return err.error.message;
           }
   //setError(false);
       const res = await resp.json();
-     
-      return res;  
+      navigate('/login');
+      
     } catch (err) {
-    
-      return err.error.message;
+      console.log("request to sign up failed");
+      dispatch(themeAction.toggleError());
+     // return err.error.message;
     }
     
   }
@@ -52,11 +57,13 @@ function SignUp() {
 
   const handleSubmit =async (e) => {
     e.preventDefault();
-    setError(false);
+    if(error){
+      dispatch(themeAction.toggleError());
+    }
 
     console.log(formData); // Perform signup logic or API call here
      if(formData.password!=formData.confirm){
-        setError("password is not matched");
+        
         return;
      }
     
@@ -68,12 +75,9 @@ function SignUp() {
       }
       const resp = await addUserToFirebase(detail);
     // console.log("inside check",resp)
-      if(!resp.idToken){
-        setError(resp);
-        return;
-      }
-      console.log( "login===", resp)
-      navigate('/login');
+     
+     
+      
     
     setFormData({
       email: '',
@@ -111,7 +115,7 @@ function SignUp() {
           onChange={handleChange}
           required
         />
-          {error && <div>{ error}</div>}
+          {error && <div>"failed to sign Up</div>}
         <button type="submit">Sign Up</button>
 
         <div>

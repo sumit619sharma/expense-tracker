@@ -20,11 +20,25 @@ const expenseSlice = createSlice({
         state.expenseTotal = Number(state.expenseTotal)-  Number(state.expenseItem[action.payload.id].price)     
         delete state.expenseItem[action.payload.id];
      },updateExpense(state,action){
-        state.expenseTotal = Number(state.expenseTotal)-  Number(state.expenseItem[action.payload.id].price);
-        state.expenseTotal = Number(state.expenseTotal)+  Number(action.payload.item.price);
+       console.log('currAction', action.payload)
+       console.log('currItem', state.expenseItem[action.payload.id])
+        // state.expenseTotal = Number(state.expenseTotal)-  Number(state.expenseItem[action.payload.id].price);
+        // state.expenseTotal = Number(state.expenseTotal)+  Number(action.payload.item.price);
         
       const passItem= {...action.payload.item,id: action.payload.id}
         state.expenseItem[ action.payload.id]=passItem;
+     },
+     getRefreshExpense(state,action){
+      const resObj =action.payload 
+      let currTotalSum=0;
+      
+      for(let key in resObj){
+        const currExpDetail = resObj[key];
+        currTotalSum+=Number(currExpDetail.price);
+         }
+         state.expenseItem = resObj;
+         state.expenseTotal = currTotalSum;
+         console.log('after Refresh===', state.expenseTotal,state.expenseItem);
      }
     }
 })

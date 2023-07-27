@@ -1,17 +1,18 @@
 import React, { useContext, useState, } from 'react';
 import { Card, Container } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import {Link, useNavigate} from 'react-router-dom'
+import {Link, Navigate, useNavigate} from 'react-router-dom'
 import { authAction } from '../redux-store/auth-reducer';
+import { themeAction } from '../redux-store/theme-reducer';
 //import AuthContext from '../store/auth-context';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(false);
+  
       const navigation =  useNavigate();
       const dispatch = useDispatch();
-      const emailExist = useSelector(state=> state.auth.userDetail.email  ) ;
+     const error = useSelector(state=> state.theme.error); 
       
    //const authCtx= useContext(AuthContext);
   const handleUsernameChange = (e) => {
@@ -23,7 +24,7 @@ const Login = () => {
   };
 
 const getUserLogin = async (userDetail) =>{
-  
+  console.log('inside login');
   try {
     const resp = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyA4Old42pkOxqkr1jsyq_dYLAFonOwLHJ4',{
       method: 'POST',
@@ -33,18 +34,20 @@ const getUserLogin = async (userDetail) =>{
        }   
     })
         if(!resp.ok){
+          console.log('request send but failed to fetch')
          // setError(true);
-          const err=await resp.json();
-          console.log("response with error",err);
-            //  return err.error.message;
+        dispatch(themeAction.toggleError());
+        return;
         }
 
     const res = await resp.json();
     const passData = {idToken: res.idToken,email: res.email}
    console.log('use details onLogin',res);
    dispatch( authAction.onLogIn({data: passData}));
-    return res;  
+   navigation('/welcome');
+    
   } catch (err) {
+    dispatch(themeAction.toggleError());
     console.log("request failed", err);
     // return err.error.message;
   }
@@ -53,24 +56,24 @@ const getUserLogin = async (userDetail) =>{
 
   const handleSubmit =async (e) => {
     e.preventDefault();
-       setError(false);
+    if(error){
+      dispatch(themeAction.toggleError());
+    }
+     
     const detail = {
       email: email,
       password: password,
       returnSecureToken: true,
     }
-  const resp=   await getUserLogin(detail);
-  // console.log("inside check",resp)
-  console.log( "emailExist==", emailExist)
-    if(!resp.email){
-      setError(true);
-      return;
-    }
+    await getUserLogin(detail);
+ 
+ 
    
   // authCtx.onLogIn(resp.idToken,resp.email);
   // localStorage.setItem('email',resp.email);
   // localStorage.setItem('token',resp.idToken); 
-  navigation('/welcome');
+ 
+  
     
   };
 
@@ -103,8 +106,9 @@ const getUserLogin = async (userDetail) =>{
         </div>
         {error && <div>{"failed to login"}</div>}
         <button type="submit">Login</button>
-        <div>
+        <div style={{display:'flex' , justifyContent:'space-between'}}>
           <Link to='/forgot'>forgott password?</Link>
+          <Link to='/'>sign Up?</Link>
         </div>
       </form>
     </div>
