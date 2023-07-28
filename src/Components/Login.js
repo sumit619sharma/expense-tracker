@@ -4,8 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import {Link, Navigate, useNavigate} from 'react-router-dom'
 import { authAction } from '../redux-store/auth-reducer';
 import { themeAction } from '../redux-store/theme-reducer';
+import axios from 'axios';
 //import AuthContext from '../store/auth-context';
-
+let errMsg="";
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,7 +14,7 @@ const Login = () => {
       const navigation =  useNavigate();
       const dispatch = useDispatch();
      const error = useSelector(state=> state.theme.error); 
-      
+      console.log('error state',error);
    //const authCtx= useContext(AuthContext);
   const handleUsernameChange = (e) => {
     setEmail(e.target.value);
@@ -26,25 +27,23 @@ const Login = () => {
 const getUserLogin = async (userDetail) =>{
   console.log('inside login');
   try {
-    const resp = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyA4Old42pkOxqkr1jsyq_dYLAFonOwLHJ4',{
-      method: 'POST',
-      body: JSON.stringify(userDetail),
-       headers: {
-        'Content-Type': 'application/json',
-       }   
-    })
-        if(!resp.ok){
+    //https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyA4Old42pkOxqkr1jsyq_dYLAFonOwLHJ4
+   let resp = await axios.post('http://localhost:3000/auth/login',userDetail)
+       
+       //errMsg=resp.message;
+    console.log("backend response object",resp)
+        if(resp.status!=200){
           console.log('request send but failed to fetch')
          // setError(true);
         dispatch(themeAction.toggleError());
         return;
         }
 
-    const res = await resp.json();
-    const passData = {idToken: res.idToken,email: res.email}
-   console.log('use details onLogin',res);
-   dispatch( authAction.onLogIn({data: passData}));
-   navigation('/welcome');
+    
+     const passData = {idToken:"abcd",email: resp.data.email}
+  //  console.log('use details onLogin',res);
+    dispatch( authAction.onLogIn({data: passData}));
+    navigation('/welcome');
     
   } catch (err) {
     dispatch(themeAction.toggleError());
@@ -63,7 +62,7 @@ const getUserLogin = async (userDetail) =>{
     const detail = {
       email: email,
       password: password,
-      returnSecureToken: true,
+      // returnSecureToken: true,
     }
     await getUserLogin(detail);
  
@@ -104,7 +103,7 @@ const getUserLogin = async (userDetail) =>{
             onChange={handlePasswordChange}
           />
         </div>
-        {error && <div>{"failed to login"}</div>}
+        {error && <div style={{padding:'5px',margin:'5px',backgroundColor: error?'red': 'white' ,width:'200px',color:"black"}}>{"Failed to login"}</div>}
         <button type="submit">Login</button>
         <div style={{display:'flex' , justifyContent:'space-between'}}>
           <Link to='/forgot'>forgott password?</Link>
