@@ -6,6 +6,7 @@ import { themeAction } from '../redux-store/theme-reducer';
 
 function SignUp() {
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
     password: '',
     confirm: '',
@@ -17,7 +18,8 @@ const error = useSelector(state=> state.theme.error);
 const addUserToFirebase = async (userDetail) =>{
     
     try {
-      const resp = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA4Old42pkOxqkr1jsyq_dYLAFonOwLHJ4',{
+      //https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA4Old42pkOxqkr1jsyq_dYLAFonOwLHJ4
+      const resp = await fetch('http://localhost:3000/auth/signup',{
         method: 'POST',
         body: JSON.stringify(userDetail),
          headers: {
@@ -69,6 +71,7 @@ const addUserToFirebase = async (userDetail) =>{
     
 
     const detail = {
+      name: formData.name,
         email: formData.email,
         password: formData.password,
         returnSecureToken: true,
@@ -80,6 +83,7 @@ const addUserToFirebase = async (userDetail) =>{
       
     
     setFormData({
+      name: '',
       email: '',
       password: '',
       confirm: '',
@@ -91,6 +95,15 @@ const addUserToFirebase = async (userDetail) =>{
       <h2 style={{color: 'black'}} >Sign Up</h2>
       <form className="signup-form" onSubmit={handleSubmit}>
         
+      <input
+          type="text"
+          name="name"
+          placeholder="username"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
+
         <input
           type="email"
           name="email"
