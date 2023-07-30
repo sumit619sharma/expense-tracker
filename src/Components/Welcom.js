@@ -297,7 +297,7 @@ const sendEmailVerification = async (idToken, apiKey) => {
                 return (
                   <div style={{margin:'8px',padding:'10px',backgroundColor: 'Highlight',width:'100%'}}>
                     <li style={{fontWeight: 'bold'}} >
-                      {rank.name}:: expenseAmount: {rank.expenseAmount}
+                      {rank.name}:: expenseAmount: {rank.totalCost}
                     </li>
                   </div>
                 )

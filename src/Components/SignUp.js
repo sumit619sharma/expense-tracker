@@ -26,6 +26,7 @@ const addUserToFirebase = async (userDetail) =>{
           'Content-Type': 'application/json',
          }   
       })
+      console.log('SignUp resp===',resp);
           if(!resp.ok){
            // setError(true);
             const err=await resp.json();
