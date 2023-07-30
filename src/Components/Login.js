@@ -40,7 +40,7 @@ const getUserLogin = async (userDetail) =>{
         }
 
     
-     const passData = {idToken:"abcd",email: resp.data.email}
+     const passData = {idToken:resp.data.token,email: resp.data.email,isPremium: resp.data.isPremium}
   //  console.log('use details onLogin',res);
     dispatch( authAction.onLogIn({data: passData}));
     navigation('/welcome');

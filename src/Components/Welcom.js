@@ -7,7 +7,7 @@ import EditContext from '../store/edit-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { expenseAction } from '../redux-store/expense-reducer';
 import { themeAction } from '../redux-store/theme-reducer';
-
+import axios from 'axios'
 const Welcom = () => {
 
 
@@ -21,7 +21,22 @@ const [href,setHref] = useState(null);
   console.log("WELCOME SCREEN");
     const modifiedEmail = user.email.replace(/[@.]/g, '');
      
-const editExpense =async (item,id)=>{
+    useEffect(() => {
+      // Load Razorpay script dynamically
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.async = true;
+      document.body.appendChild(script);
+  
+      return () => {
+        // Cleanup: remove the script when the component is unmounted
+        document.body.removeChild(script);
+      };
+    }, []);
+
+
+
+    const editExpense =async (item,id)=>{
   // maybe i can remove id from item 
   item = {...item,id}
   console.log("edit item==",item);
@@ -31,8 +46,9 @@ const editExpense =async (item,id)=>{
       method:'PUT',
       body: JSON.stringify(item),
       headers:{
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+          'Authorization': user.idToken
+        }
      })
      if(!resp.ok){
       throw new Error("succesful request but no response ")
@@ -54,6 +70,9 @@ const deleteExpense =async (id)=>{
     //`https://react-http-2f680-default-rtdb.firebaseio.com/expenses/${modifiedEmail}/${id}.json`
    const resp=  await fetch(`http://localhost:3000/expense/delete/${id}`,{
     method:'DELETE',
+    headers:{
+      'Authorization': user.idToken
+    }
      })
   
    if(!resp.ok){
@@ -76,7 +95,8 @@ const getAllExpense =async ()=>{
 try {
   
 //`https://react-http-2f680-default-rtdb.firebaseio.com/expenses/${modifiedEmail}.json`
-  const resp=  await fetch('http://localhost:3000/expense')
+  const resp=  await fetch('http://localhost:3000/expense',
+  {headers: {'Authorization': user.idToken}})
 
  if(!resp.ok){
    throw new Error("succesful request but no response ")
@@ -178,9 +198,53 @@ const sendEmailVerification = async (idToken, apiKey) => {
       const api ='AIzaSyA4Old42pkOxqkr1jsyq_dYLAFonOwLHJ4';
         sendEmailVerification(token,api);
    }
-   const onPremiumTheme = ()=>{
-  dispatch(themeAction.darkTheme());
+   const onPremiumTheme = async (e)=>{
+  //dispatch(themeAction.darkTheme());
+ try {
+  const resp = await axios.get('http://localhost:3000/purchase/premiummembership',{
+    headers: {'Authorization': user.idToken}
+  })
+  console.log("is order created===",resp)
+  const options = {
+    "key": resp.data.key_id,
+    "order_id": resp.data.order.id,
+    "handler": async function (response) {
+ // This function will be called when the payment is successful
+      
+        console.log('Payment successful!', response);
+        await axios.post('http://localhost:3000/purchase/updatetransactionstatus',{
+          order_id: options.order_id,
+          payment_id: response.razorpay_payment_id,
+          status: "SUCCESSFUl",
+          isPremium: true,
+        },{
+          headers: {'Authorization': user.idToken}
+        })
+      
+  alert("you are a premium user now");
+         // You can perform any actions after a successful payment here
+    }
+     };
 
+  const rzp = new window.Razorpay(options);
+  rzp.open();
+  e.preventDefault();
+  rzp.on('payment.failed', async function (response){
+    console.log("payment failed==",response)
+    await axios.post('http://localhost:3000/purchase/updatetransactionstatus',{
+      order_id: options.order_id,
+      payment_id: null,
+      status: "FAILED",
+      isPremium: false,
+    },{
+      headers: {'Authorization': user.idToken}
+    })
+  
+  })
+
+ } catch (error) {
+  console.log("got error with api==",error);
+ }
    }
    const onToggleTheme = ()=>{
     dispatch(themeAction.toggleTheme());
@@ -189,6 +253,14 @@ const sendEmailVerification = async (idToken, apiKey) => {
          const blob = new Blob(expense,{type: 'text/plain'})
          setHref(URL.createObjectURL(blob) );
         }
+
+        const showLeaderBoard =async () =>{
+     const resp=     await axios.post('http://localhost:3000/purchase/showLeaderboard',{
+            headers: {'Authorization': user.idToken}
+          })
+          console.log("leader list===",resp);
+        }
+        
   
   return (
     <div style={{marginTop: '7%'}} >
@@ -198,9 +270,11 @@ const sendEmailVerification = async (idToken, apiKey) => {
     </div>
     <div style={{display:'flex', justifyContent: 'space-around'}} >
     <Button   style={{ backgroundColor: isVerified? 'green': 'red', }} onClick={makeEmailRequest}> { isVerified? 'verified': 'Verify Email'}  </Button>
-     {totalExpense>10000 && <Button   variant='success'  onClick={onPremiumTheme}>Activate-premium</Button>} 
+   {!user.isPremium && <Button   variant='success'  onClick={onPremiumTheme}>Activate-premium</Button> }
+   {user.isPremium && <Button   variant='success' >You are a Premium User</Button>  }  
+   {user.isPremium && <Button   variant='dark'  onClick={showLeaderBoard}>show-Leaderoard</Button> }  
      {totalExpense>10000 && <Button   variant='success'  onClick={OnDownloadExpense}> <a download="expense1.txt" href={href} >DownLoad-Expense</a> </Button>}
-     <Button   variant='warning'  onClick={onToggleTheme}>change-theme</Button>
+    <Button   variant='warning'  onClick={onToggleTheme}>change-theme</Button>    
     </div>
     <NewExpense setExpense={newExpenseHandler} editExp ={editExpenseeHandler}  />
       <Expenses item = {expense} cat={categories[0]} deleteExp={deleteExpenseeHandler} editExp ={editExpenseeHandler} />

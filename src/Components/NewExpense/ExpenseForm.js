@@ -35,7 +35,8 @@ const filledEditDetails=()=>{
           method:'POST',
           body: JSON.stringify(item),
           headers:{
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': user.idToken
           }
          })
          if(!resp.ok){
@@ -89,7 +90,7 @@ const filledEditDetails=()=>{
         //     const resObject = await getExpense(resp.name);
         //     props.setExpense(resObject,resp.name);
         //  }
-        console.log('create backend resp==',resp)
+        
            
         // if(resp.id){
         //   const resObject = await getExpense(resp.id);
