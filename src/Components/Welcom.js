@@ -8,12 +8,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { expenseAction } from '../redux-store/expense-reducer';
 import { themeAction } from '../redux-store/theme-reducer';
 import axios from 'axios'
+import { authAction } from '../redux-store/auth-reducer';
 const Welcom = () => {
 
 
 const [isVerified ,setIsVerified] = useState(false);
 const [expense,setExpense] =useState([]);
 const [href,setHref] = useState(null);
+const [leaderBoard,setLeaderBoard] = useState([]);
+const [showBoard, setShowLeaderBoard] = useState(false);
  const dispatch = useDispatch();
  const editCtx = useContext(EditContext);
    const totalExpense = useSelector(state=>state.expense.expenseTotal);
@@ -137,6 +140,7 @@ const newExpenseHandler= (newItem,id)=>{
   //  dispatch(expenseAction.addExpense(passItem))
 
           getAllExpense();
+          showLeaderBoard();
 }
 
 
@@ -221,7 +225,7 @@ const sendEmailVerification = async (idToken, apiKey) => {
           headers: {'Authorization': user.idToken}
         })
       
-  alert("you are a premium user now");
+         dispatch(authAction.onPayment());
          // You can perform any actions after a successful payment here
     }
      };
@@ -255,11 +259,15 @@ const sendEmailVerification = async (idToken, apiKey) => {
         }
 
         const showLeaderBoard =async () =>{
-     const resp=     await axios.post('http://localhost:3000/purchase/showLeaderboard',{
+          console.log("inot show leaderboarcd ");
+     const resp=     await axios.get('http://localhost:3000/purchase/showLeaderboard',{
             headers: {'Authorization': user.idToken}
           })
+          const leaderList = await resp.data.leaderList;
           console.log("leader list===",resp);
-        }
+        setLeaderBoard(leaderList);
+      setShowLeaderBoard(!showBoard);  
+      }
         
   
   return (
@@ -280,8 +288,26 @@ const sendEmailVerification = async (idToken, apiKey) => {
       <Expenses item = {expense} cat={categories[0]} deleteExp={deleteExpenseeHandler} editExp ={editExpenseeHandler} />
       <Expenses item = {expense} cat={categories[1]} deleteExp={deleteExpenseeHandler}   editExp ={editExpenseeHandler} />
       <Expenses item = {expense} cat={categories[2]} deleteExp={deleteExpenseeHandler}  editExp ={editExpenseeHandler} />
-   
+       { showBoard && 
+         <>
+       <h1 >LeaderBoard:</h1>
+           <div style={{display: 'flex',flexDirection:'column', justifyContent:"center",alignItems:'center',width:'90%'}}>
+            {
+              leaderBoard.map(rank => {
+                return (
+                  <div style={{margin:'8px',padding:'10px',backgroundColor: 'Highlight',width:'100%'}}>
+                    <li style={{fontWeight: 'bold'}} >
+                      {rank.name}:: expenseAmount: {rank.expenseAmount}
+                    </li>
+                  </div>
+                )
+              })
+            }
+           </div>  
+           </>    
+        }
        </div>
+       
   )
 }
 

@@ -18,6 +18,9 @@ const authSlice = createSlice({
         console.log("get called onLogOut");
          state.isLoggedIn=false;
          state.userDetail={};
+      },
+      onPayment(state){
+        state.userDetail.isPremium=true;
       }
     }
 })
