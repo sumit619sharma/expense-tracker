@@ -149,6 +149,7 @@ const deleteExpenseeHandler= async (deleteId)=>{
    await deleteExpense(deleteId);
 
    await getAllExpense();
+   await showLeaderBoard();
 
 }
 
@@ -158,6 +159,7 @@ const editExpenseeHandler= async (item,id)=>{
    await editExpense(item,id);
    editCtx.offSureEdit();
  await getAllExpense();
+ showLeaderBoard();
  //  getAllExpense();
   // await deleteExpense(deleteId);
   // await getAllExpense();

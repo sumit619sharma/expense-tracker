@@ -39,11 +39,12 @@ const filledEditDetails=()=>{
             'Authorization': user.idToken
           }
          })
+
          if(!resp.ok){
           throw new Error("succesful request but no response ")
          }
-         const resArr = resp.json();
-       return resArr;
+      
+      
         
       } catch (error) {
         console.log("post error==",error);   
@@ -85,7 +86,7 @@ const filledEditDetails=()=>{
        }          
             
          
-          const resp = await  createExpense(formDetail);
+          await  createExpense(formDetail);
         //  if(resp.name){
         //     const resObject = await getExpense(resp.name);
         //     props.setExpense(resObject,resp.name);

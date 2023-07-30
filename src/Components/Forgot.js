@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState } from 'react'
 import { Card, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -8,30 +9,27 @@ const Forgot = () => {
    const navigate = useNavigate();
     const sendForgotPasswordRequest = async (email, apiKey) => {
       console.log(email, apiKey);
-        const url = `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${apiKey}`;
-      
+       // const url = `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${apiKey}`;
+         
         const payload = {
           requestType: 'PASSWORD_RESET',
           email: email
         };
       
         try {
-          const response = await fetch(url, {
-            method: 'POST',
-            body: JSON.stringify(payload)
-          });
-      
+          const response = await axios.post('http://localhost:3000/password/forgotpassword',{email})
+         console.log("forgot response==",response)
           if (!response.ok) {
             setError(true);
             return response;
-            throw new Error('Failed to send forgot password request');
+        
           }
 
       return await response.json();
-          console.log('Forgot password request sent successfully');
+        
         } catch (error) {
          return error
-          console.log('Error sending forgot password request:', error);
+        
         }
       };
       const handleSubmit =async (e) => {
@@ -41,10 +39,10 @@ const Forgot = () => {
         const resp = await sendForgotPasswordRequest(email,api)
       // console.log("inside check",resp)
       console.log('resp',resp);
-        if(!resp.email){
-            setError(true);
-           return;
-        }
+        // if(!resp.email){
+        //     setError(true);
+        //    return;
+        // }
         // console.log( "login===", resp)
      
          navigate('/login');
