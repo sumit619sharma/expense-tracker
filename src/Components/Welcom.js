@@ -283,7 +283,7 @@ const sendEmailVerification = async (idToken, apiKey) => {
    {!user.isPremium && <Button   variant='success'  onClick={onPremiumTheme}>Activate-premium</Button> }
    {user.isPremium && <Button   variant='success' >You are a Premium User</Button>  }  
    {user.isPremium && <Button   variant='dark'  onClick={showLeaderBoard}>show-Leaderoard</Button> }  
-     {totalExpense>10000 && <Button   variant='success'  onClick={OnDownloadExpense}> <a download="expense1.txt" href={href} >DownLoad-Expense</a> </Button>}
+     {user.isPremium && <Button   variant='info'  onClick={OnDownloadExpense}> <a download="expense1.txt" href={href} >DownLoad-Expense</a> </Button>}
     <Button   variant='warning'  onClick={onToggleTheme}>change-theme</Button>    
     </div>
     <NewExpense setExpense={newExpenseHandler} editExp ={editExpenseeHandler}  />
