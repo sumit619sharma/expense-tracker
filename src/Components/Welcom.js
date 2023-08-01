@@ -1,4 +1,4 @@
-import React, { useState ,useEffect, useContext} from 'react'
+import React, { useState ,useEffect, useContext, useRef} from 'react'
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import NewExpense from './NewExpense/NewExpense';
@@ -9,6 +9,7 @@ import { expenseAction } from '../redux-store/expense-reducer';
 import { themeAction } from '../redux-store/theme-reducer';
 import axios from 'axios'
 import { authAction } from '../redux-store/auth-reducer';
+
 const Welcom = () => {
 
 
@@ -17,14 +18,19 @@ const [expense,setExpense] =useState([]);
 const [href,setHref] = useState(null);
 const [leaderBoard,setLeaderBoard] = useState([]);
 const [showBoard, setShowLeaderBoard] = useState(false);
+//const [paginationInfo ,setPaginationData] = useState();
+const downloadLinkRef = useRef();
  const dispatch = useDispatch();
  const editCtx = useContext(EditContext);
    const totalExpense = useSelector(state=>state.expense.expenseTotal);
+   const paginationInfo = useSelector(state=>state.expense.paginationInfo) || null;
+   const rowChange = useSelector(state=>state.expense.rowChange) ;
    const user = useSelector(state=>state.auth.userDetail);
   console.log("WELCOME SCREEN");
     const modifiedEmail = user.email.replace(/[@.]/g, '');
-     
-    useEffect(() => {
+     console.log('redux paginationInfo==',paginationInfo);
+   console.log('row chabge==',rowChange)
+     useEffect(() => {
       // Load Razorpay script dynamically
       const script = document.createElement('script');
       script.src = 'https://checkout.razorpay.com/v1/checkout.js';
@@ -92,34 +98,36 @@ const deleteExpense =async (id)=>{
   }
   } 
 
-const getAllExpense =async ()=>{
-  
+const getAllExpense =async (page)=>{
+  const limit = localStorage.getItem('row')?localStorage.getItem('row'): 5;
   
 try {
   
 //`https://react-http-2f680-default-rtdb.firebaseio.com/expenses/${modifiedEmail}.json`
-  const resp=  await fetch('http://localhost:3000/expense',
+  const resp=  await fetch(`http://localhost:3000/expense?page=${page}&limit=${limit}`,
   {headers: {'Authorization': user.idToken}})
 
  if(!resp.ok){
    throw new Error("succesful request but no response ")
   }
   const resArr = await resp.json();
+
   console.log("resArr===getAllExoense",resArr)
-  const resObj= resArr.reduce((result, obj) => {
+  const resObj= resArr.products.reduce((result, obj) => {
     result[obj.id] = obj;
     return result;
   }, {});
-    onRefreshGetExpense(resObj);
-    setExpense(resArr);
- 
+  
+    onRefreshGetExpense(resObj,resArr.paginationInfo);
+    setExpense(resArr.products);
+    //setPaginationData(resArr.paginationInfo)
 } catch (error) {
  console.log("post error==",error);   
 }
 } 
 
-const onRefreshGetExpense = (resObj)=>{
- dispatch((expenseAction.getRefreshExpense(resObj)));
+const onRefreshGetExpense = (resObj,paginationInfo)=>{
+ dispatch((expenseAction.getRefreshExpense({resObj,paginationInfo})));
   // const expenseArr = [];
   // for(let key in resObj){
   //   const currExpDetail = resObj[key];
@@ -141,6 +149,7 @@ const newExpenseHandler= (newItem,id)=>{
 
           getAllExpense();
           showLeaderBoard();
+          OnDownloadExpense();
 }
 
 
@@ -150,6 +159,7 @@ const deleteExpenseeHandler= async (deleteId)=>{
 
    await getAllExpense();
    await showLeaderBoard();
+   OnDownloadExpense();
 
 }
 
@@ -160,6 +170,7 @@ const editExpenseeHandler= async (item,id)=>{
    editCtx.offSureEdit();
  await getAllExpense();
  showLeaderBoard();
+ OnDownloadExpense();
  //  getAllExpense();
   // await deleteExpense(deleteId);
   // await getAllExpense();
@@ -168,8 +179,10 @@ const editExpenseeHandler= async (item,id)=>{
 
 
 useEffect(()=>{
-   getAllExpense();
-},[]);
+  
+   getAllExpense(1);
+  //  OnDownloadExpense();
+},[rowChange]);
 
 
 const categories=["Electronic","Food", "SkinCare"]; 
@@ -255,10 +268,23 @@ const sendEmailVerification = async (idToken, apiKey) => {
    const onToggleTheme = ()=>{
     dispatch(themeAction.toggleTheme());
      }
-     const OnDownloadExpense = ()=>{
-         const blob = new Blob(expense,{type: 'text/plain'})
-         setHref(URL.createObjectURL(blob) );
+     const OnDownloadExpense = async ()=>{
+      
+      //  const blob = new Blob(expense,{type: 'text/plain'})
+        //  setHref(URL.createObjectURL(blob) );
+       try {
+     const resp = await  axios.get('http://localhost:3000/expense/download',{headers:{'Authorization': user.idToken}})
+   console.log('downlad link==',resp);
+     if(resp.status===200){
+     setHref(resp.data.fileUrl);
+     
+      //downloadLinkRef.current.click();
+       }    
+    
+    } catch (error) {
+          console.log(error);
         }
+       }
 
         const showLeaderBoard =async () =>{
           console.log("inot show leaderboarcd ");
@@ -270,6 +296,8 @@ const sendEmailVerification = async (idToken, apiKey) => {
         setLeaderBoard(leaderList);
       setShowLeaderBoard(!showBoard);  
       }
+
+      
         
   
   return (
@@ -283,13 +311,23 @@ const sendEmailVerification = async (idToken, apiKey) => {
    {!user.isPremium && <Button   variant='success'  onClick={onPremiumTheme}>Activate-premium</Button> }
    {user.isPremium && <Button   variant='success' >You are a Premium User</Button>  }  
    {user.isPremium && <Button   variant='dark'  onClick={showLeaderBoard}>show-Leaderoard</Button> }  
-     {user.isPremium && <Button   variant='info'  onClick={OnDownloadExpense}> <a download="expense1.txt" href={href} >DownLoad-Expense</a> </Button>}
+     {user.isPremium && <Button   variant='info'  > <a  ref={downloadLinkRef} download="expense.csv" href={href} >DownLoad-Expense</a> </Button>}
     <Button   variant='warning'  onClick={onToggleTheme}>change-theme</Button>    
     </div>
     <NewExpense setExpense={newExpenseHandler} editExp ={editExpenseeHandler}  />
       <Expenses item = {expense} cat={categories[0]} deleteExp={deleteExpenseeHandler} editExp ={editExpenseeHandler} />
       <Expenses item = {expense} cat={categories[1]} deleteExp={deleteExpenseeHandler}   editExp ={editExpenseeHandler} />
       <Expenses item = {expense} cat={categories[2]} deleteExp={deleteExpenseeHandler}  editExp ={editExpenseeHandler} />
+    {paginationInfo && 
+      <div style={{display:'flex',justifyContent:'space-around',alignItems: 'center', padding:'10px',margin:'7px'}}>
+     {paginationInfo.hasPreviousPage && <Button  onClick={()=> getAllExpense(paginationInfo.currentPage-1)} >PREV{'<<'} </Button> } 
+      <Button  variant='warning' onClick={()=> getAllExpense(paginationInfo.currentPage)} >PAGE {paginationInfo.currentPage}</Button>
+     {paginationInfo.hasNextPage && <Button  onClick={()=> getAllExpense(paginationInfo.currentPage+1)} >NEXT{'>>'} </Button> } 
+      <Button  onClick={()=> getAllExpense(paginationInfo.lastPage)} >LAST-PAGE </Button>
+     </div>
+     } 
+     
+     
        { showBoard && 
          <>
        <h1 >LeaderBoard:</h1>

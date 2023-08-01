@@ -3,6 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState={
     expenseItem: {},
     expenseTotal: 0,
+    paginationInfo:{},
+    rowChange: 0.1,
 }
 
 const expenseSlice = createSlice({
@@ -29,7 +31,8 @@ const expenseSlice = createSlice({
         state.expenseItem[ action.payload.id]=passItem;
      },
      getRefreshExpense(state,action){
-      const resObj =action.payload 
+      const {resObj, paginationInfo } =action.payload 
+      console.log('redux paginationInfo==',action.payload)
       let currTotalSum=0;
       
       for(let key in resObj){
@@ -38,7 +41,11 @@ const expenseSlice = createSlice({
          }
          state.expenseItem = resObj;
          state.expenseTotal = currTotalSum;
-         console.log('after Refresh===', state.expenseTotal,state.expenseItem);
+         state.paginationInfo= paginationInfo;
+       
+     },
+     onRowChange(state){
+      state.rowChange = Math.random();
      }
     }
 })
